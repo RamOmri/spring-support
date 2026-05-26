@@ -8,3 +8,5 @@ target/
 .DS_Store
 *.log
 uploads/
+# Runtime artifact written by the flywheel setup script with the per-run flag.
+secrets.txt
