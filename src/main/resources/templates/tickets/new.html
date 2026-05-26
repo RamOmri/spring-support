@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New ticket - Support Portal</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" th:href="@{/tickets}">Support Portal</a>
+    <nav>
+        Signed in as <strong th:text="${currentUser}">user</strong>
+        <form th:action="@{/logout}" method="post" class="inline-form" style="display:inline">
+            <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <button type="submit">Logout</button>
+        </form>
+    </nav>
+</header>
+<main class="container narrow">
+    <h1>New ticket</h1>
+    <form th:action="@{/tickets}" method="post" th:object="${ticketForm}">
+        <label>Title
+            <input type="text" th:field="*{title}" required maxlength="255">
+        </label>
+        <label>Priority
+            <select th:field="*{priority}">
+                <option th:each="p : ${priorities}" th:value="${p}" th:text="${p}">NORMAL</option>
+            </select>
+        </label>
+        <label>Description
+            <textarea th:field="*{description}" rows="8" maxlength="16000"></textarea>
+        </label>
+        <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+        <div class="form-actions">
+            <a class="button-secondary" th:href="@{/tickets}">Cancel</a>
+            <button type="submit">Create ticket</button>
+        </div>
+    </form>
+</main>
+</body>
+</html>

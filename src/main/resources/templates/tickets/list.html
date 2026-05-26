@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tickets - Support Portal</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" th:href="@{/tickets}">Support Portal</a>
+    <nav>
+        <a th:href="@{/tickets}">Tickets</a>
+        <a th:href="@{/search}">Search</a>
+        Signed in as <strong th:text="${currentUser}">user</strong>
+        <form th:action="@{/logout}" method="post" class="inline-form" style="display:inline">
+            <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <button type="submit">Logout</button>
+        </form>
+    </nav>
+</header>
+<main class="container">
+    <div class="page-header">
+        <h1>Tickets</h1>
+        <a class="button" th:href="@{/tickets/new}">New ticket</a>
+    </div>
+    <p th:if="${#lists.isEmpty(tickets)}" class="alert info">
+        No tickets yet. Open one to get started.
+    </p>
+    <table th:unless="${#lists.isEmpty(tickets)}">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Status</th>
+            <th>Priority</th>
+            <th>Customer</th>
+            <th>Assigned</th>
+            <th>Updated</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="ticket : ${tickets}">
+            <td><a th:href="@{|/tickets/${ticket.id}|}" th:text="${ticket.id}">1</a></td>
+            <td><a th:href="@{|/tickets/${ticket.id}|}" th:text="${ticket.title}">title</a></td>
+            <td th:text="${ticket.status}">OPEN</td>
+            <td th:text="${ticket.priority}">NORMAL</td>
+            <td th:text="${ticket.customerUsername}">customer</td>
+            <td th:text="${ticket.assignedAgentUsername != null ? ticket.assignedAgentUsername : '—'}">—</td>
+            <td th:text="${#temporals.format(ticket.updatedAt, 'yyyy-MM-dd HH:mm')}">2026-01-01 00:00</td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

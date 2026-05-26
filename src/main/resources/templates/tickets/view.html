@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="|Ticket #${ticket.id} - Support Portal|">Ticket - Support Portal</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" th:href="@{/tickets}">Support Portal</a>
+    <nav>
+        <a th:href="@{/tickets}">Tickets</a>
+        <a th:href="@{/search}">Search</a>
+        <span th:if="${isAdmin}"><a th:href="@{/admin/users}">Admin</a></span>
+        Signed in as <strong th:text="${currentUser}">user</strong>
+        <form th:action="@{/logout}" method="post" class="inline-form" style="display:inline">
+            <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <button type="submit">Logout</button>
+        </form>
+    </nav>
+</header>
+<main class="container">
+    <a th:href="@{/tickets}">&larr; Back to tickets</a>
+    <h1 th:text="${ticket.title}">title</h1>
+    <dl class="meta">
+        <dt>Status</dt><dd th:text="${ticket.status}">OPEN</dd>
+        <dt>Priority</dt><dd th:text="${ticket.priority}">NORMAL</dd>
+        <dt>Customer</dt><dd th:text="${ticket.customerUsername}">customer</dd>
+        <dt>Assigned</dt><dd th:text="${ticket.assignedAgentUsername != null ? ticket.assignedAgentUsername : 'unassigned'}">unassigned</dd>
+        <dt>Opened</dt><dd th:text="${#temporals.format(ticket.createdAt, 'yyyy-MM-dd HH:mm')}">2026-01-01 00:00</dd>
+    </dl>
+
+    <section class="ticket-body">
+        <h2>Description</h2>
+        <div class="body" th:utext="${ticket.description}">description goes here</div>
+    </section>
+
+    <section th:if="${isStaff}" class="status-controls">
+        <h2>Update status</h2>
+        <form th:action="@{|/tickets/${ticket.id}/status|}" method="post" class="inline-form">
+            <select name="status">
+                <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}" th:selected="${s == ticket.status}">OPEN</option>
+            </select>
+            <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <button type="submit">Update status</button>
+        </form>
+    </section>
+
+    <section th:if="${isAdmin}" class="assign-controls">
+        <h2>Assign agent</h2>
+        <form th:action="@{|/tickets/${ticket.id}/assign|}" method="post" class="inline-form">
+            <select name="agentId">
+                <option th:each="agent : ${agents}" th:value="${agent.id}"
+                        th:text="${agent.username + ' (' + agent.role + ')'}"
+                        th:selected="${ticket.assignedAgentId != null and agent.id == ticket.assignedAgentId}">agent</option>
+            </select>
+            <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <button type="submit">Assign</button>
+        </form>
+    </section>
+
+    <section class="attachments">
+        <h2>Attachments</h2>
+        <ul th:unless="${#lists.isEmpty(attachments)}">
+            <li th:each="att : ${attachments}">
+                <a th:href="@{|/attachments/${att.id}/download|}" th:text="${att.filename}">file.txt</a>
+                <span class="muted" th:text="|(${att.sizeBytes} bytes)|">(0 bytes)</span>
+                <span class="muted" th:text="|uploaded by ${att.uploadedByUsername}|">uploaded by user</span>
+            </li>
+        </ul>
+        <p th:if="${#lists.isEmpty(attachments)}" class="muted">No attachments yet.</p>
+        <form th:action="@{|/tickets/${ticket.id}/attachments|}" method="post" enctype="multipart/form-data">
+            <label>Add file
+                <input type="file" name="file" required>
+            </label>
+            <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <button type="submit">Upload</button>
+        </form>
+    </section>
+
+    <section class="comments">
+        <h2>Comments</h2>
+        <p th:if="${#lists.isEmpty(comments)}" class="muted">No comments yet.</p>
+        <article class="comment" th:each="comment : ${comments}">
+            <header>
+                <strong th:text="${comment.authorUsername}">author</strong>
+                <time th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}">2026-01-01 00:00</time>
+            </header>
+            <div class="body" th:text="${comment.body}">comment body</div>
+        </article>
+
+        <form th:action="@{|/tickets/${ticket.id}/comments|}" method="post" th:object="${commentForm}">
+            <label>Add a comment
+                <textarea th:field="*{body}" rows="4" required></textarea>
+            </label>
+            <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <button type="submit">Post comment</button>
+        </form>
+    </section>
+</main>
+</body>
+</html>

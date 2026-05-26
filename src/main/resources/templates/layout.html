@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle} ?: 'Support Portal'">Support Portal</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" th:href="@{/tickets}">Support Portal</a>
+    <nav>
+        <span th:if="${currentUser}">
+            Signed in as <strong th:text="${currentUser}">user</strong>
+            <form th:action="@{/logout}" method="post" class="inline-form">
+                <button type="submit">Logout</button>
+            </form>
+        </span>
+        <span th:unless="${currentUser}">
+            <a th:href="@{/login}">Login</a>
+            <a th:href="@{/register}">Register</a>
+        </span>
+    </nav>
+</header>
+<main class="container">
+    <div th:replace="${content}">Page content goes here</div>
+</main>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin · Users - Support Portal</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" th:href="@{/tickets}">Support Portal</a>
+    <nav>
+        <a th:href="@{/tickets}">Tickets</a>
+        <a th:href="@{/admin/users}">Users</a>
+        <a th:href="@{/admin/webhooks}">Webhooks</a>
+        <a th:href="@{/admin/import}">Import</a>
+        Signed in as <strong th:text="${currentUser}">user</strong>
+        <form th:action="@{/logout}" method="post" class="inline-form" style="display:inline">
+            <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <button type="submit">Logout</button>
+        </form>
+    </nav>
+</header>
+<main class="container">
+    <h1>Users</h1>
+    <table>
+        <thead>
+        <tr><th>ID</th><th>Username</th><th>Email</th><th>Role</th><th>Enabled</th><th>Change role</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.id}">1</td>
+            <td th:text="${user.username}">user</td>
+            <td th:text="${user.email}">user@example.com</td>
+            <td th:text="${user.role}">CUSTOMER</td>
+            <td th:text="${user.enabled} ? 'yes' : 'no'">yes</td>
+            <td>
+                <form th:action="@{|/admin/users/${user.id}/role|}" method="post" class="inline-form">
+                    <select name="role">
+                        <option th:each="r : ${roles}" th:value="${r}" th:text="${r}" th:selected="${r == user.role}">role</option>
+                    </select>
+                    <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <button type="submit">Update</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

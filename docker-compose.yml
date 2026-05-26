@@ -1,0 +1,47 @@
+services:
+  postgres:
+    image: postgres:17
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME:-supportportal}
+      POSTGRES_USER: ${DB_USER:-portal}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-portal}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-portal}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - portal-network
+
+  app:
+    build:
+      context: .
+    image: spring-support-portal
+    restart: on-failure
+    environment:
+      SERVER_PORT: ${SERVER_PORT:-8000}
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_NAME:-supportportal}
+      DB_USER: ${DB_USER:-portal}
+      DB_PASSWORD: ${DB_PASSWORD:-portal}
+      JWT_SECRET: ${JWT_SECRET:-dev-jwt-secret-please-rotate-in-prod-0123456789abcdef}
+      JWT_ACCESS_TTL_MINUTES: ${JWT_ACCESS_TTL_MINUTES:-15}
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - portal-network
+
+volumes:
+  pgdata:
+
+networks:
+  portal-network:
+    driver: bridge

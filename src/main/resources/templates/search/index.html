@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search - Support Portal</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" th:href="@{/tickets}">Support Portal</a>
+    <nav>
+        <a th:href="@{/tickets}">Tickets</a>
+        <a th:href="@{/search}">Search</a>
+        Signed in as <strong th:text="${currentUser}">user</strong>
+        <form th:action="@{/logout}" method="post" class="inline-form" style="display:inline">
+            <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <button type="submit">Logout</button>
+        </form>
+    </nav>
+</header>
+<main class="container">
+    <h1>Search tickets</h1>
+    <form th:action="@{/search}" method="get">
+        <label>Query
+            <input type="text" name="q" th:value="${q}" placeholder="title or description text" autofocus>
+        </label>
+        <button type="submit">Search</button>
+    </form>
+
+    <section th:if="${not #strings.isEmpty(q)}">
+        <h2 th:text="|Results for &quot;${q}&quot;|">Results</h2>
+        <p th:if="${#lists.isEmpty(results)}" class="muted">No matches.</p>
+        <table th:unless="${#lists.isEmpty(results)}">
+            <thead><tr><th>ID</th><th>Title</th><th>Status</th><th>Priority</th><th>Customer</th></tr></thead>
+            <tbody>
+            <tr th:each="t : ${results}">
+                <td><a th:href="@{|/tickets/${t.id}|}" th:text="${t.id}">1</a></td>
+                <td th:text="${t.title}">title</td>
+                <td th:text="${t.status}">OPEN</td>
+                <td th:text="${t.priority}">NORMAL</td>
+                <td th:text="${t.customerUsername}">customer</td>
+            </tr>
+            </tbody>
+        </table>
+        <form th:if="${not #strings.isEmpty(q)}" th:action="@{/searches}" method="post" class="inline-form">
+            <input type="hidden" name="query" th:value="${q}">
+            <label>Save this search as
+                <input type="text" name="name" required maxlength="128">
+            </label>
+            <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <button type="submit">Save</button>
+        </form>
+    </section>
+
+    <section>
+        <h2>Your saved searches</h2>
+        <p th:if="${#lists.isEmpty(savedSearches)}" class="muted">No saved searches.</p>
+        <ul th:unless="${#lists.isEmpty(savedSearches)}">
+            <li th:each="s : ${savedSearches}">
+                <a th:href="@{/search(q=${s.query})}" th:text="${s.name}">name</a>
+                <span class="muted" th:text="|(${s.query})|">(query)</span>
+                <form th:action="@{|/searches/${s.id}/delete|}" method="post" class="inline-form" style="display:inline">
+                    <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <button type="submit">Delete</button>
+                </form>
+            </li>
+        </ul>
+    </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin · Bulk import - Support Portal</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" th:href="@{/tickets}">Support Portal</a>
+    <nav>
+        <a th:href="@{/tickets}">Tickets</a>
+        <a th:href="@{/admin/users}">Users</a>
+        <a th:href="@{/admin/webhooks}">Webhooks</a>
+        <a th:href="@{/admin/import}">Import</a>
+        Signed in as <strong th:text="${currentUser}">user</strong>
+        <form th:action="@{/logout}" method="post" class="inline-form" style="display:inline">
+            <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <button type="submit">Logout</button>
+        </form>
+    </nav>
+</header>
+<main class="container">
+    <h1>Bulk import</h1>
+    <p th:if="${importResult}" class="alert info" th:text="${importResult}">Import result</p>
+    <p th:if="${importError}" class="alert error" th:text="|Error: ${importError}|">Error</p>
+
+    <section>
+        <h2>XML import</h2>
+        <form th:action="@{/admin/import/xml}" method="post">
+            <label>XML payload
+                <textarea name="payload" rows="10" required placeholder="&lt;tickets&gt;&lt;ticket&gt;...&lt;/ticket&gt;&lt;/tickets&gt;"></textarea>
+            </label>
+            <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <button type="submit">Import XML</button>
+        </form>
+    </section>
+
+    <section>
+        <h2>CSV import</h2>
+        <p class="muted">First row must be a header: <code>title,description,customerEmail</code></p>
+        <form th:action="@{/admin/import/csv}" method="post">
+            <label>CSV payload
+                <textarea name="payload" rows="10" required placeholder="title,description,customerEmail&#10;login broken,details here,customer@example.com"></textarea>
+            </label>
+            <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <button type="submit">Import CSV</button>
+        </form>
+    </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register - Support Portal</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="container narrow">
+    <h1>Create an account</h1>
+    <div th:if="${errorMessage}" class="alert error" th:text="${errorMessage}">error</div>
+    <form th:action="@{/register}" method="post" th:object="${registerForm}">
+        <label>Username
+            <input type="text" th:field="*{username}" required minlength="3" maxlength="64">
+        </label>
+        <label>Email
+            <input type="email" th:field="*{email}" required>
+        </label>
+        <label>Password
+            <input type="password" th:field="*{password}" required minlength="6">
+        </label>
+        <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+        <button type="submit">Register</button>
+    </form>
+    <p>Already have an account? <a th:href="@{/login}">Sign in</a></p>
+</main>
+</body>
+</html>

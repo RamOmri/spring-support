@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign in - Support Portal</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="container narrow">
+    <h1>Sign in</h1>
+    <p th:if="${param.error}" class="alert error">Invalid email or password.</p>
+    <p th:if="${param.logout}" class="alert info">You have been signed out.</p>
+    <p th:if="${param.registered}" class="alert info">Account created. Please sign in.</p>
+    <form th:action="@{/login}" method="post">
+        <label>Email
+            <input type="email" name="email" required autofocus>
+        </label>
+        <label>Password
+            <input type="password" name="password" required>
+        </label>
+        <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+        <button type="submit">Sign in</button>
+    </form>
+    <p>No account? <a th:href="@{/register}">Register</a></p>
+</main>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin · Webhooks - Support Portal</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" th:href="@{/tickets}">Support Portal</a>
+    <nav>
+        <a th:href="@{/tickets}">Tickets</a>
+        <a th:href="@{/admin/users}">Users</a>
+        <a th:href="@{/admin/webhooks}">Webhooks</a>
+        <a th:href="@{/admin/import}">Import</a>
+        Signed in as <strong th:text="${currentUser}">user</strong>
+        <form th:action="@{/logout}" method="post" class="inline-form" style="display:inline">
+            <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <button type="submit">Logout</button>
+        </form>
+    </nav>
+</header>
+<main class="container">
+    <h1>Webhooks</h1>
+    <section>
+        <h2>Existing webhooks</h2>
+        <p th:if="${#lists.isEmpty(webhooks)}" class="muted">No webhooks configured.</p>
+        <table th:unless="${#lists.isEmpty(webhooks)}">
+            <thead>
+            <tr><th>ID</th><th>Name</th><th>Target URL</th><th>Event</th><th>Enabled</th><th></th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="hook : ${webhooks}">
+                <td th:text="${hook.id}">1</td>
+                <td th:text="${hook.name}">name</td>
+                <td th:text="${hook.targetUrl}">https://example.com</td>
+                <td th:text="${hook.eventType}">ticket.status_changed</td>
+                <td th:text="${hook.enabled} ? 'yes' : 'no'">yes</td>
+                <td>
+                    <form th:action="@{|/admin/webhooks/${hook.id}/delete|}" method="post" class="inline-form">
+                        <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>Add webhook</h2>
+        <form th:action="@{/admin/webhooks}" method="post" th:object="${webhookForm}">
+            <label>Name
+                <input type="text" th:field="*{name}" required maxlength="128">
+            </label>
+            <label>Target URL
+                <input type="url" th:field="*{targetUrl}" required>
+            </label>
+            <label>Event type
+                <input type="text" th:field="*{eventType}" value="ticket.status_changed">
+            </label>
+            <label>
+                <input type="checkbox" th:field="*{enabled}"> Enabled
+            </label>
+            <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <button type="submit">Create webhook</button>
+        </form>
+    </section>
+</main>
+</body>
+</html>

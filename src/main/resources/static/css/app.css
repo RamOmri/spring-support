@@ -1,0 +1,30 @@
+* { box-sizing: border-box; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    margin: 0;
+    background: #f5f7fa;
+    color: #111;
+}
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.5rem;
+    background: #1f2937;
+    color: #fff;
+}
+.topbar a, .topbar .brand { color: #fff; text-decoration: none; margin-right: 0.75rem; }
+.topbar .brand { font-weight: 600; }
+.topbar nav form { display: inline; margin: 0 0 0 0.5rem; }
+.topbar nav button { background: transparent; color: #fff; border: 1px solid #4b5563; padding: 0.25rem 0.6rem; cursor: pointer; }
+.container { max-width: 1024px; margin: 1.5rem auto; padding: 0 1rem; }
+.container.narrow { max-width: 480px; }
+form label { display: block; margin: 0.75rem 0; }
+form input { width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 4px; }
+form button { padding: 0.5rem 1rem; background: #2563eb; color: #fff; border: 0; border-radius: 4px; cursor: pointer; }
+form button:hover { background: #1d4ed8; }
+.alert { padding: 0.75rem 1rem; border-radius: 4px; margin: 0.75rem 0; }
+.alert.info { background: #dbeafe; color: #1e3a8a; }
+.alert.error { background: #fee2e2; color: #991b1b; }
+table { width: 100%; border-collapse: collapse; }
+table th, table td { padding: 0.5rem 0.75rem; border-bottom: 1px solid #e5e7eb; text-align: left; }
